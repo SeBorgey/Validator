@@ -9,7 +9,10 @@ import validate
 
 class Window:
     def __init__(self):
-
+        """
+        Инициализация класса Window.
+        Создает и настраивает главное окно приложения с вкладками для проверки тестов и сверки с ответом.
+        """
         app = QApplication(sys.argv)
         QCoreApplication.setOrganizationDomain("MIPT")
         QCoreApplication.setApplicationName("validator")

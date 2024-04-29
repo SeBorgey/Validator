@@ -7,6 +7,10 @@ from core import Core
 
 class Validate(QWidget):
     def __init__(self):
+        """
+        Инициализация класса Validate.
+        Создает и настраивает элементы пользовательского интерфейса.
+        """
         super().__init__()
         self.settings = QSettings()
         self.button_current = QPushButton()
@@ -47,6 +51,12 @@ class Validate(QWidget):
         self.button_run.clicked.connect(self.run)
 
     def run(self):
+        """
+        Запускает процесс валидации.
+        Проверяет соответствие вывода программы пользователя и эталонной программы
+        для указанного количества тестов.
+        Выводит результаты проверки в текстовое поле.
+        """
         self.text_edit_result.setText("")
         for i in range(int(self.line_edit_amount.text())):
             if not Core.validate_test(self.line_edit_myfile.text(),
@@ -58,6 +68,10 @@ class Validate(QWidget):
         self.text_edit_result.setText("OK")
 
     def get_path_myfile(self):
+        """
+        Открывает диалоговое окно для выбора файла программы пользователя.
+        Устанавливает выбранный путь в соответствующее текстовое поле и сохраняет его в настройках.
+        """
         filename, _ = QFileDialog.getOpenFileName(
             self,
             "Select a File")
@@ -68,6 +82,10 @@ class Validate(QWidget):
         pass
 
     def get_path_sample(self):
+        """
+        Открывает диалоговое окно для выбора файла эталонной программы.
+        Устанавливает выбранный путь в соответствующее текстовое поле и сохраняет его в настройках.
+        """
         filename, _ = QFileDialog.getOpenFileName(
             self,
             "Select a File")
@@ -78,6 +96,10 @@ class Validate(QWidget):
         pass
 
     def get_path_generator(self):
+        """
+        Открывает диалоговое окно для выбора файла генератора тестовых данных.
+        Устанавливает выбранный путь в соответствующее текстовое поле и сохраняет его в настройках.
+        """
         filename, _ = QFileDialog.getOpenFileName(
             self,
             "Select a File")
