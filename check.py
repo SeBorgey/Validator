@@ -2,19 +2,15 @@ from PyQt5.QtCore import QSettings
 from PyQt5.QtWidgets import *
 import sys
 from pathlib import Path
-from core import Core
 
 
 class Check(QWidget):
-    def __init__(self):
-        """
-        Инициализация класса Check.
-        Создает и настраивает виджеты для проверки тестов.
-        """
+    def __init__(self, core):
         self.settings = QSettings()
         self.set_test = set()
         self.set_test_texts = set()
         super().__init__()
+        self.core = core
         self.button_current = QPushButton()
         self.button_file = QPushButton("Файл для проверки", self)
         self.button_file.move(30, 100)
@@ -86,32 +82,22 @@ class Check(QWidget):
         self.settings.endArray()
 
     def copy(self):
-        """
-        Копирует текст из поля ввода теста в буфер обмена.
-        """
         text = self.text_edit_test.toPlainText() + '\n'
         c = QApplication.clipboard()
         c.setText(text)
 
     def run(self):
-        """
-        Запускает проверку тестов.
-        Проверяет каждый тест из набора тестов и отображает результаты.
-        """
         self.text_edit_result.setText("")
         for l in self.set_test:
             test, ans = Check.get_test_ans(l)
-            if Core.check_test(self.line_edit_path.text(), test, ans):
+            if self.core.check_test(self.line_edit_path.text(), test, ans):
                 l.setStyleSheet("Text-align:left;background-color:green;")
             else:
                 l.setStyleSheet("Text-align:left;background-color:red;")
-                text = "Test:\n" + test + "\nRight ans:\n" + ans + "\nYour ans:\n" + Core.my + '\n\n'
+                text = "Test:\n" + test + "\nRight ans:\n" + ans + "\nYour ans:\n" + self.core.my + '\n\n'
                 self.text_edit_result.setText("Error\n" + self.text_edit_result.toPlainText() + text)
 
     def get_path(self):
-        """
-        Открывает диалоговое окно для выбора файла и сохраняет путь к выбранному файлу.
-        """
         filename, _ = QFileDialog.getOpenFileName(
             self,
             "Select a File")
@@ -119,11 +105,9 @@ class Check(QWidget):
             path = Path(filename)
             self.line_edit_path.setText(str(path))
             self.settings.setValue("check_path", str(path))
+        pass
 
     def save_tests(self):
-        """
-        Сохраняет тесты в настройках приложения.
-        """
         self.settings.remove("tests")
         self.settings.beginWriteArray("tests")
         i = 0
@@ -134,9 +118,6 @@ class Check(QWidget):
         self.settings.endArray()
 
     def delete_all(self):
-        """
-        Удаляет все тесты и очищает соответствующие виджеты.
-        """
         self.container = QWidget()
         self.scroll_area_tests.setWidget(self.container)
         self.layout_scroll = QVBoxLayout(self.container)
@@ -147,12 +128,6 @@ class Check(QWidget):
 
     @staticmethod
     def get_test_ans(button):
-        """
-        Извлекает текст теста и ответа из текста кнопки.
-
-        :param button: Кнопка, содержащая текст теста и ответа.
-        :return: Кортеж из текста теста и ответа.
-        """
         text = button.text()
         index = text.find("\n\n")
         text_test = text[:index]
@@ -160,10 +135,6 @@ class Check(QWidget):
         return text_test, text_ans
 
     def choose(self):
-        """
-        Обрабатывает выбор теста при нажатии на кнопку.
-        Отображает текст выбранного теста и ответа в соответствующих полях ввода.
-        """
         self.button_current.setChecked(False)
         self.button_current = self.sender()
         self.button_current.setChecked(True)
@@ -175,11 +146,6 @@ class Check(QWidget):
         self.text_edit_ans.setText(text_ans)
 
     def get_test_text(self):
-        """
-        Получает текст теста и ответа из полей ввода и форматирует их.
-
-        :return: Отформатированный текст теста и ответа.
-        """
         test = self.text_edit_test.toPlainText()
         ans = self.text_edit_ans.toPlainText()
         while test[-1] == '\n':
@@ -194,10 +160,6 @@ class Check(QWidget):
         return text
 
     def save(self):
-        """
-        Сохраняет изменения в текущем тесте.
-        Обновляет текст кнопки и сохраняет тесты в настройках приложения.
-        """
         try:
             text = self.get_test_text()
         except IndexError:
@@ -213,10 +175,6 @@ class Check(QWidget):
         self.save_tests()
 
     def delete(self):
-        """
-        Удаляет выбранный тест.
-        Удаляет текст теста из набора тестов и удаляет кнопку теста.
-        """
         self.set_test_texts.remove(self.button_current.text())
         self.set_test.remove(self.button_current)
         self.button_current.setVisible(False)
@@ -224,10 +182,6 @@ class Check(QWidget):
         self.save_tests()
 
     def add(self):
-        """
-        Добавляет новый тест.
-        Создает новую кнопку с текстом теста и ответа и добавляет ее в набор тестов.
-        """
         try:
             text = self.get_test_text()
         except IndexError:
