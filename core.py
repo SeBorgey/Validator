@@ -37,5 +37,5 @@ class Core:
         true_output = ""
         with subprocess.Popen(Core.get_args(mypath), stdin=subprocess.PIPE, stdout=subprocess.PIPE) as programming:
             true_output, _ = programming.communicate(test.encode())
-        self.my = true_output.decode().strip().replace('\r', '')
+        self.my = true_output.decode().strip()
         return self.my == ans

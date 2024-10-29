@@ -156,6 +156,8 @@ class Check(QWidget):
             test = test[:-1]
         while ans[-1] == ' ':
             ans = ans[:-1]
+        test=test.replace(" \n", "\n")
+        ans=ans.replace(" \n", "\n")
         text = test + '\n\n' + ans
         return text
 
